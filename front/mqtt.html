@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+  <head>
+    <!-- <script type="text/javascript" src="./mqtt.js"></script> -->
+    <!-- <script type="text/javascript" src="./mqtt.min.js"></script> -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/2.18.8/mqtt.min.js"></script>
+
+    <script type="text/javascript">
+
+// MQTT broker details
+const brokerUrl = 'mqtt://192.168.155.86:1883'; // Use 'wss://' for secure connections
+
+// Generate a random client ID
+const randomClientId = 'mqtt-client-' + Math.random().toString(16).substr(2, 8);
+
+// Ensure the client ID is not empty
+if (!randomClientId) {
+  console.error('Client ID is missing or empty. Please provide a valid client ID.');
+  process.exit(1); // Exit the script
+}
+
+const options = {
+  clientId: randomClientId,
+};
+
+const client = mqtt.connect(brokerUrl, options);
+
+client.on('connect', () => {
+  console.log('Connected to MQTT broker');
+  // Subscribe to a topic when connected
+  client.subscribe('topic'); // Replace 'your-topic' with the desired topic
+});
+
+client.on('message', (topic, message) => {
+  console.log(`Received message on topic ${topic}: ${message.toString()}`);
+});
+
+client.on('error', (error) => {
+  console.error('MQTT Error:', error);
+});
+
+// Publish a message to a topic
+client.publish('topic', 'Hello, MQTT!'); // Replace 'your-topic' with the desired topic
+
+// To disconnect from the broker when you're done
+// client.end();
+
+
+  </script>
+</head> 
+
+<body>
+  <h1>Example Web Messaging web page.</h1>
+  <form id="example">
+  <fieldset>
+  <legend id="Connect" > Connect </legend>
+    Make a connection to the server, and set up a call back used if a 
+    message arrives for this client.
+    <br>
+    <input type="button" value="Connect" onClick="doConnect(this.form)" name="Connect"/>
+    <input type="checkbox" name="connected" disabled="disabled"/>
+  </fieldset>
+
+  <fieldset>
+  <legend id="Subscribe" > Subscribe </legend>
+  Make a subscription to topic "/World".
+  <br> <input type="button" value="Subscribe" onClick="doSubscribe(this.form)"/>
+  </fieldset>
+
+  <fieldset>
+  <legend id="Send" > Send </legend>
+    Create a Message object containing the word "Hello" and then publish it at
+    the server.
+    <br>
+    <input type="button" value="Send" onClick="doSend(this.form)"/>
+  </fieldset>
+
+  <fieldset>
+  <legend id="Receive" > Receive </legend>
+    A copy of the published Message is received in the callback we created earlier.
+  <textarea name="receiveMsg" rows="1" cols="40" disabled="disabled"></textarea>
+  </fieldset>
+
+  <fieldset>
+  <legend id="Disconnect" > Disconnect </legend>
+    Now disconnect this client from the server.
+  <br> <input type="button" value="Disconnect" onClick="doDisconnect()"/>
+  </fieldset>
+  </form>
+</body>
+</html>
